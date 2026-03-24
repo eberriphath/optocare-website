@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.logo {
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #f97316; /* ORANGE */
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(rgba(30,58,138,0.85), rgba(30,58,138,0.85)),
+                url('https://images.unsplash.com/photo-1588776814546-1ffcf47267a5');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero h1 {
+    font-size: 40px;
+}
+
+.hero p {
+    margin-top: 10px;
+}
+
+/* BUTTON */
+.btn {
+    background: #f97316;
+    color: white;
+    padding: 12px 25px;
+    display: inline-block;
+    margin-top: 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #ea580c;
+}
+
+/* SECTIONS */
+section {
+    padding: 70px 20px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+/* GRID */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+/* CARDS */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    text-align: left;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* IMAGES */
+.card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* ABOUT */
+.about {
+    background: white;
+    max-width: 800px;
+    margin: auto;
+    border-radius: 10px;
+}
+
+/* TESTIMONIALS */
+.testimonials {
+    background: #f9fafb;
+}
+
+.review {
+    background: white;
+    margin: 15px auto;
+    padding: 20px;
+    max-width: 500px;
+    border-radius: 12px;
+}
+
+/* CONTACT */
+.contact {
+    background: #1e3a8a;
+    color: white;
+}
+
+.contact p {
+    margin: 10px 0;
+}
+
+/* WHATSAPP */
+.whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    text-decoration: none;
+}
+
+.whatsapp img {
+    width: 20px;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: #1f2937;
+    color: white;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+    }
+}
