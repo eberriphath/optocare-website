@@ -80,9 +80,50 @@ body {
     background: #ea580c;
 }
 
+
+.review-form {
+    background: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.review-form form {
+    max-width: 500px;
+    margin: auto;
+}
+
+.review-form input,
+.review-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+}
+
+.review-form textarea {
+    height: 120px;
+    resize: none;
+}
+
+.review-form button {
+    background: #f97316;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.review-form button:hover {
+    background: #ea580c;
+}
+
+
 /* SECTIONS */
 section {
-    padding: 70px 20px;
+    padding: 120px 20px;
     text-align: center;
 }
 
