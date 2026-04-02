@@ -23,6 +23,57 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
+/*nav-menu*/
+.nav-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.nav-menu span {
+    width: 25px;
+    height: 3px;
+    background: #1e3a8a;
+    border-radius: 2px;
+}
+
+/* MOBILE / REDUCED SCREEN NAVIGATION */
+@media (max-width: 1024px) {
+    .nav-links {
+        display: flex;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 220px;
+        background: white;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 25px; /* spacing between links */
+        transition: right 0.3s ease;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 6px; /* slightly more visible gap for the hamburger */
+        width: 35px;
+        height: 30px;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* DESKTOP NAVIGATION */
 .logo {
     color: #1e3a8a;
     font-weight: 700;
@@ -31,7 +82,7 @@ body {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 25px;
+    gap: 25px; /* spacing between desktop nav links */
 }
 
 .nav-links a {
@@ -54,6 +105,17 @@ body {
     color: white;
     text-align: center;
     padding: 100px 20px;
+}
+
+.partner-btn {
+    background: #f97316;
+    color: white !important;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+.partner-btn:hover {
+    background: #ea580c;
 }
 
 .hero h1 {
@@ -80,7 +142,7 @@ body {
     background: #ea580c;
 }
 
-
+/* REVIEW FORM */
 .review-form {
     background: white;
     padding: 60px 20px;
@@ -119,7 +181,6 @@ body {
 .review-form button:hover {
     background: #ea580c;
 }
-
 
 /* SECTIONS */
 section {
@@ -212,15 +273,4 @@ h2 {
     padding: 20px;
     background: #1f2937;
     color: white;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-
-    .hero h1 {
-        font-size: 28px;
-    }
 }

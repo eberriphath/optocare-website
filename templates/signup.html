@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply as Partner - Optocare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .signup-container {
+            max-width: 700px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .signup-container h2 { text-align: center; margin-bottom: 10px; }
+        .signup-container p { text-align: center; margin-bottom: 30px; color: #6b7280; }
+        .signup-form input, .signup-form textarea {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;
+            font-family: inherit;
+        }
+        .signup-form textarea { height: 120px; resize: none; }
+        .signup-form button {
+            width: 100%; background: #f97316; color: white; padding: 14px; border: none;
+            border-radius: 8px; margin-top: 15px; cursor: pointer;
+        }
+        .signup-form button:hover { background: #ea580c; }
+        .note { font-size: 14px; text-align: center; margin-top: 15px; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2 class="logo">Optocare</h2>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/signup" class="partner-btn">Become a Partner</a></li>
+        </ul>
+    </nav>
+
+    <div class="signup-container">
+        <h2>Apply to Join Optocare</h2>
+        <p>We review all applications to ensure quality and trust.</p>
+
+        <form class="signup-form" action="/signup" method="POST" enctype="multipart/form-data">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="text" name="position" placeholder="Position" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+
+            <input type="text" name="company_name" placeholder="Company Name" required>
+            <input type="text" name="location" placeholder="Location" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+
+            <textarea name="choices" placeholder="Partnering with us in : retailer, wholesaler , freelancer" required></textarea>
+            <textarea name="services" placeholder="Services offered e.g Ophthalmic lenses , Contact lenses , Frames , Eye tests , Glazing" required></textarea>
+            <input type="file" name="document" required>
+
+            <button type="submit">Submit Application</button>
+        </form>
+
+        <p class="note">Your application will be reviewed before approval.</p>
+    </div>
+</body>
+</html>

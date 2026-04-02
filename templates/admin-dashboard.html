@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard - Optocare</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+.admin {
+    padding: 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approve {
+    background: green;
+    color: white;
+}
+
+.reject {
+    background: red;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2 class="logo">Admin Panel</h2>
+</nav>
+
+<div class="admin">
+
+    <h2>Partner Applications</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Store</th>
+            <th>Location</th>
+            <th>Action</th>
+        </tr>
+
+        <tr>
+            <td>John Doe</td>
+            <td>Vision Optical</td>
+            <td>Nairobi</td>
+            <td>
+                <button class="approve">Approve</button>
+                <button class="reject">Reject</button>
+            </td>
+        </tr>
+
+    </table>
+
+</div>
+
+</body>
+</html>

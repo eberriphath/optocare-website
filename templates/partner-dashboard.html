@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Partner Dashboard - Optocare</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+.dashboard {
+    padding: 40px;
+}
+
+.card-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2 class="logo">Optocare Partner</h2>
+</nav>
+
+<div class="dashboard">
+
+    <h2>Welcome, Partner 👋</h2>
+
+    <div class="card-box">
+        <h3>Status</h3>
+        <p style="color: green;">Approved ✅</p>
+    </div>
+
+    <div class="card-box">
+        <h3>Store Details</h3>
+        <p><strong>Name:</strong> Vision Optical</p>
+        <p><strong>Location:</strong> Nairobi</p>
+        <p><strong>Services:</strong> Eye testing, lenses, frames</p>
+    </div>
+
+    <div class="card-box">
+        <h3>Messages from Admin</h3>
+        <p>No new messages</p>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optocare</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h2 class="logo">Optocare</h2>
+
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="{{ url_for('signup') }}" class="partner-btn">Become a Partner</a></li>
+        </ul>
+
+        <div class="nav-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <h1>Clear Vision Starts Here</h1>
+        <p>Your trusted partner in eye care solutions</p>
+        <a href="#contact" class="btn">Get In Touch</a>
+    </header>
+
+    <!-- ABOUT -->
+    <section id="about" class="about">
+        <h2>About Optocare<br></h2>
+        <p>
+            Optocare is an online optical store offering you the best optical care from wherever you are.
+            Optocare partners with the best eye care professionals in your area for professional eye care.
+            We provide not only what your eye needs but also what fits you because we believe in you being presentable all the time.
+        </p>
+
+        <p>Our clients are:-<br>
+            <li>1. Individuals who need visual aid,</li>
+            <li>2. Individuals who need glasses and sunglasses for fashion,</li>
+            <li>3. Individuals interested in contact lenses for fashion or corrective vision,</li>
+            <li>4. Eyecare practitioners in need of optical machines and tools,</li>
+            <li>5. Eyecare practitioners seeking to train their staff with latest optical knowledge,</li>
+            <li>6. Optical stores seeking to connect with world leading brands,</li>
+            <li>7. Optical stores seeking to upgrade their machines and equipment.</li>
+        </p>
+
+        <p>
+           Operating from UAE gives us an upper hand and deeper international reach, providing consultation services regarding global brands.
+        </p>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="services">
+        <h2>Our Products & Services</h2>
+        <div class="service-grid">
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/eyewear.jpg') }}" alt="Eyewear">
+                <h3>Eyewear / Frames</h3>
+                <p>Latest brands - Dior, Bvlgari, Tom Ford, Cartier, Emporio Armani, Dolce & Gabbana, Burberry, Prada, Versace, Police, Ray-Ban and more.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/sunglasses.jpg') }}" alt="Sunglasses">
+                <h3>Sunglasses</h3>
+                <p>Top brands - Ray-Ban, Oakley, Nike, Under Armour, Puma, Prada, Gucci, Police, Carrera, Louis Vuitton, Tom Ford and Polaroid.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/lenses.jpg') }}" alt="Contact Lenses">
+                <h3>Contact Lenses</h3>
+                <p>Clear and coloured lenses, both prescription and cosmetic. Disposable options: one day, two weeks, one month.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/lenses2.jpg') }}" alt="Ophthalmic Lenses">
+                <h3>Ophthalmic Lenses</h3>
+                <p>Latest lenses for single vision, presbyopia, myopia, computer coatings, transition lenses, eye protection coatings.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/repair.jpg') }}" alt="Repairs">
+                <h3>Repairs & Adjustments</h3>
+                <p>Professional repair and fitting services.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/clinic.jpg') }}" alt="Facilities">
+                <h3>Ophthalmic Machines Consultancy</h3>
+                <p>Modern testing room machines - Phoropter, Slit lamp, Retinoscopy, AR machine, Fundus camera.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/accessories.jpg') }}" alt="Accessories">
+                <h3>Accessories</h3>
+                <p>All essential optical accessories and tools available.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="testimonials">
+        <h2>What Our Clients Say</h2>
+
+        <div class="review">
+            <p>"Excellent service and genuine products. Highly recommend!"</p>
+            <h4>- Customer</h4>
+        </div>
+
+        <div class="review">
+            <p>"Professional team and great selection of eyewear."</p>
+            <h4>- Client</h4>
+        </div>
+    </section>
+
+    <!-- REVIEW FORM -->
+    <section class="review-form">
+        <h2>Leave a review</h2>
+        <p>We value your feedback</p>
+
+        <form action="https://formspree.io/f/mkopnepy" method="post">
+            <input type="text" name="name" placeholder="Your name" required>
+            <textarea name="message" placeholder="Leave a review..." required></textarea>
+            <button type="submit">Submit Review</button>
+        </form>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <p><strong>Phone:</strong> +971 55 540 6361</p>
+        <p><strong>WhatsApp:</strong> 0722645700 / +971 55 540 6361</p>
+        <p><strong>Email:</strong> optocare@email.com</p>
+        <p><strong>Location:</strong> Nairobi, Kenya</p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2026 Optocare. All rights reserved.</p>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelector('.nav-links');
+
+    if(navMenu && navLinks) {
+        navMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+});
+</script> 
+
+</body>
+</html>
