@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Admin Dashboard - Optocare</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 <style>
 .admin {
     padding: 40px;
@@ -14,6 +13,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    margin-top: 20px;
 }
 
 th, td {
@@ -27,6 +27,7 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .approve {
@@ -49,27 +50,46 @@ button {
 
 <div class="admin">
 
-    <h2>Partner Applications</h2>
+    <h2>Pending Partner Applications</h2>
 
+    {% if partners %}
     <table>
         <tr>
             <th>Name</th>
             <th>Store</th>
             <th>Location</th>
+            <th>Partner Type</th>
+            <th>Services</th>
+            <th>Document</th>
             <th>Action</th>
         </tr>
 
+        {% for partner in partners %}
         <tr>
-            <td>John Doe</td>
-            <td>Vision Optical</td>
-            <td>Nairobi</td>
+            <td>{{ partner.full_name }}</td>
+            <td>{{ partner.store_name }}</td>
+            <td>{{ partner.location }}</td>
+            <td>{{ partner.partner_type }}</td>
+            <td>{{ partner.services }}</td>
             <td>
-                <button class="approve">Approve</button>
-                <button class="reject">Reject</button>
+                {% if partner.document %}
+                    <a href="{{ url_for('static', filename='uploads/' + partner.document) }}" target="_blank">View</a>
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('approve', id=partner.id) }}"><button class="approve">Approve</button></a>
+                <!-- Uncomment below when reject route is implemented -->
+                <!-- <a href="{{ url_for('reject', id=partner.id) }}"><button class="reject">Reject</button></a> -->
             </td>
         </tr>
+        {% endfor %}
 
     </table>
+    {% else %}
+    <p>No pending applications.</p>
+    {% endif %}
 
 </div>
 

@@ -9,25 +9,78 @@
     <style>
         .signup-container {
             max-width: 700px;
-            margin: 100px auto;
+            margin: 80px auto;
             background: white;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .signup-container h2 { text-align: center; margin-bottom: 10px; }
-        .signup-container p { text-align: center; margin-bottom: 30px; color: #6b7280; }
+
+        .signup-container h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .signup-container p {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #6b7280;
+        }
+
         .signup-form input, .signup-form textarea {
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
             font-family: inherit;
         }
-        .signup-form textarea { height: 120px; resize: none; }
-        .signup-form button {
-            width: 100%; background: #f97316; color: white; padding: 14px; border: none;
-            border-radius: 8px; margin-top: 15px; cursor: pointer;
+
+        .signup-form textarea {
+            height: 120px;
+            resize: none;
         }
-        .signup-form button:hover { background: #ea580c; }
-        .note { font-size: 14px; text-align: center; margin-top: 15px; color: #6b7280; }
+
+        .signup-form button {
+            width: 100%;
+            background: #f97316;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .signup-form button:hover {
+            background: #ea580c;
+        }
+
+        .note {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+            color: #6b7280;
+        }
+
+        .checkbox-group {
+            margin: 10px 0 20px 0;
+        }
+
+        .checkbox-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -47,19 +100,29 @@
             <input type="text" name="full_name" placeholder="Full Name" required>
             <input type="text" name="position" placeholder="Position" required>
             <input type="email" name="email" placeholder="Email Address" required>
-
             <input type="text" name="company_name" placeholder="Company Name" required>
             <input type="text" name="location" placeholder="Location" required>
             <input type="text" name="phone" placeholder="Phone Number" required>
 
-            <textarea name="choices" placeholder="Partnering with us in : retailer, wholesaler , freelancer" required></textarea>
-            <textarea name="services" placeholder="Services offered e.g Ophthalmic lenses , Contact lenses , Frames , Eye tests , Glazing" required></textarea>
+            <div class="checkbox-group">
+                <span>Partnering with us in:</span>
+                <div class="checkbox-options">
+                    <label><input type="checkbox" name="partner_type" value="retailer"> Retailer</label>
+                    <label><input type="checkbox" name="partner_type" value="wholesaler"> Wholesaler</label>
+                    <label><input type="checkbox" name="partner_type" value="freelancer"> Freelancer</label>
+                </div>
+            </div>
+
+            <textarea name="services" placeholder="Services offered e.g Ophthalmic lenses, Contact lenses, Frames, Eye tests, Glazing" required></textarea>
             <input type="file" name="document" required>
 
-            <button type="submit">Submit Application</button>
-        </form>
+            <p class="note">
+                By submitting, you agree to our <a href="/terms" target="_blank">Terms & Conditions</a>
+            </p>
 
-        <p class="note">Your application will be reviewed before approval.</p>
+            <button type="submit">Submit Application</button>
+            <p>Upon submission your application will be reviewed before approval</p>
+        </form>
     </div>
 </body>
 </html>
