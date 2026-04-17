@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optocare</title>
 
+    <!-- SEO (NEW) -->
+    <meta name="description" content="Optocare connects you to trusted eye care professionals and optical products.">
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
@@ -19,6 +22,10 @@
 
         <ul class="nav-links">
             <li><a href="{{ url_for('home') }}">Home</a></li>
+
+            <!-- NEW -->
+            <li><a href="{{ url_for('partners') }}">Find Partners</a></li>
+
             <li><a href="#about">About</a></li>
             <li><a href="#services">Services</a></li>
             <li><a href="#testimonials">Reviews</a></li>
@@ -38,7 +45,13 @@
     <header class="hero">
         <h1>Clear Vision Starts Here</h1>
         <p>Your trusted partner in eye care solutions</p>
+
+        <!-- ORIGINAL BUTTON -->
         <a href="#contact" class="btn">Get In Touch</a>
+
+        <!-- NEW BUTTON (NON-DESTRUCTIVE ADDITION) -->
+        <br><br>
+        <a href="{{ url_for('partners') }}" class="btn">Find Eye Care Providers</a>
     </header>
 
     <!-- ABOUT -->
@@ -50,7 +63,9 @@
             We provide not only what your eye needs but also what fits you because we believe in you being presentable all the time.
         </p>
 
-        <p>Our clients are:-<br>
+        <!-- FIXED HTML STRUCTURE (NO TEXT CHANGE) -->
+        <p>Our clients are:-</p>
+        <ul>
             <li>1. Individuals who need visual aid,</li>
             <li>2. Individuals who need glasses and sunglasses for fashion,</li>
             <li>3. Individuals interested in contact lenses for fashion or corrective vision,</li>
@@ -58,7 +73,7 @@
             <li>5. Eyecare practitioners seeking to train their staff with latest optical knowledge,</li>
             <li>6. Optical stores seeking to connect with world leading brands,</li>
             <li>7. Optical stores seeking to upgrade their machines and equipment.</li>
-        </p>
+        </ul>
 
         <p>
            Operating from UAE gives us an upper hand and deeper international reach, providing consultation services regarding global brands.
@@ -69,6 +84,8 @@
     <section id="services" class="services">
         <h2>Our Products & Services</h2>
         <div class="service-grid">
+
+            <!-- unchanged cards -->
 
             <div class="card">
                 <img src="{{ url_for('static', filename='images/eyewear.jpg') }}" alt="Eyewear">

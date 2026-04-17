@@ -8,27 +8,67 @@
 <style>
 .dashboard {
     padding: 40px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .card-box {
     background: white;
     padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.logout-btn {
+.status-approved {
+    color: green;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: orange;
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: red;
+    font-weight: bold;
+}
+
+.actions {
     margin-top: 20px;
-    padding: 10px 20px;
-    background: #1e3a8a;
-    color: white;
+}
+
+button {
+    padding: 10px 18px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
 }
 
+.logout-btn {
+    background: #1e3a8a;
+    color: white;
+}
+
 .logout-btn:hover {
     background: #172554;
+}
+
+.view-btn {
+    background: #f97316;
+    color: white;
+    margin-right: 10px;
+}
+
+.view-btn:hover {
+    background: #ea580c;
 }
 </style>
 </head>
@@ -41,40 +81,61 @@
 
 <div class="dashboard">
 
-    <!-- ✅ Dynamic Welcome -->
-    <h2>Welcome, {{ partner.full_name }} 👋</h2>
+    <!-- 🔷 Header -->
+    <div class="header">
+        <h2>Welcome, {{ partner.full_name }} 👋</h2>
 
-    <!-- ✅ Status -->
+        <a href="{{ url_for('logout') }}">
+            <button class="logout-btn">Logout</button>
+        </a>
+    </div>
+
+    <!-- 🔷 Status -->
     <div class="card-box">
-        <h3>Status</h3>
+        <h3>Account Status</h3>
 
         {% if partner.is_approved %}
-            <p style="color: green;">Approved ✅</p>
+            <p class="status-approved">Approved ✅</p>
+        {% elif partner.is_rejected %}
+            <p class="status-rejected">Rejected ❌</p>
         {% else %}
-            <p style="color: orange;">Pending Approval ⏳</p>
+            <p class="status-pending">Pending Approval ⏳</p>
         {% endif %}
 
     </div>
 
-    <!-- ✅ Store Details -->
+    <!-- 🔷 Store Details -->
     <div class="card-box">
-        <h3>Store Details</h3>
+        <h3>Your Store</h3>
+
         <p><strong>Name:</strong> {{ partner.store_name }}</p>
         <p><strong>Location:</strong> {{ partner.location }}</p>
         <p><strong>Services:</strong> {{ partner.services }}</p>
         <p><strong>Partner Type:</strong> {{ partner.partner_type }}</p>
+        <p><strong>Contact:</strong> {{ partner.phone }}</p>
+
     </div>
 
-    <!-- ✅ Messages -->
+    <!-- 🔷 Quick Actions -->
+    <div class="card-box">
+        <h3>Quick Actions</h3>
+
+        <div class="actions">
+            <a href="{{ url_for('partners') }}">
+                <button class="view-btn">View Marketplace</button>
+            </a>
+
+            <a href="{{ url_for('partner_profile', id=partner.id) }}">
+                <button class="view-btn">View Public Profile</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- 🔷 Messages -->
     <div class="card-box">
         <h3>Messages from Admin</h3>
-        <p>No new messages</p>
+        <p>No new messages yet.</p>
     </div>
-
-    <!-- ✅ Logout -->
-    <a href="{{ url_for('logout') }}">
-        <button class="logout-btn">Logout</button>
-    </a>
 
 </div>
 

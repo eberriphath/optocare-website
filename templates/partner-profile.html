@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Partner Profile</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+.container {
+    padding: 40px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+p {
+    margin: 8px 0;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2 class="logo">Optocare</h2>
+</nav>
+
+<div class="container">
+
+    <div class="card">
+        <h2>{{ partner.store_name }}</h2>
+
+        <p><strong>Owner:</strong> {{ partner.full_name }}</p>
+        <p><strong>Location:</strong> {{ partner.location }}</p>
+        <p><strong>Phone:</strong> {{ partner.phone }}</p>
+        <p><strong>Services:</strong> {{ partner.services }}</p>
+        <p><strong>Partner Type:</strong> {{ partner.partner_type }}</p>
+
+        {% if partner.is_approved %}
+            <p style="color:green;"><strong>Status:</strong> Approved</p>
+        {% else %}
+            <p style="color:orange;"><strong>Status:</strong> Pending</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -4,40 +4,70 @@
 <meta charset="UTF-8">
 <title>Admin Dashboard - Optocare</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 <style>
 .admin {
     padding: 40px;
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+h2 {
+    margin-bottom: 10px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    margin-top: 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 th, td {
     padding: 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
     text-align: left;
 }
 
+th {
+    background: #f3f4f6;
+}
+
 button {
-    padding: 6px 10px;
+    padding: 6px 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     margin-right: 5px;
 }
 
 .approve {
-    background: green;
+    background: #16a34a;
     color: white;
 }
 
 .reject {
-    background: red;
+    background: #dc2626;
     color: white;
+}
+
+.status-approved {
+    color: green;
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: red;
+    font-weight: bold;
+}
+
+.empty {
+    color: #777;
+    margin-top: 10px;
 }
 </style>
 </head>
@@ -45,51 +75,104 @@ button {
 <body>
 
 <nav class="navbar">
-    <h2 class="logo">Admin Panel</h2>
+    <h2 class="logo">Optocare Admin</h2>
 </nav>
 
 <div class="admin">
 
-    <h2>Pending Partner Applications</h2>
+    <!-- 🔵 PENDING -->
+    <div class="section">
+        <h2>Pending Applications</h2>
 
-    {% if partners %}
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Store</th>
-            <th>Location</th>
-            <th>Partner Type</th>
-            <th>Services</th>
-            <th>Document</th>
-            <th>Action</th>
-        </tr>
+        {% if pending %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Store</th>
+                <th>Location</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
 
-        {% for partner in partners %}
-        <tr>
-            <td>{{ partner.full_name }}</td>
-            <td>{{ partner.store_name }}</td>
-            <td>{{ partner.location }}</td>
-            <td>{{ partner.partner_type }}</td>
-            <td>{{ partner.services }}</td>
-            <td>
-                {% if partner.document %}
-                    <a href="{{ url_for('static', filename='uploads/' + partner.document) }}" target="_blank">View</a>
-                {% else %}
-                    None
-                {% endif %}
-            </td>
-            <td>
-                <a href="{{ url_for('approve', id=partner.id) }}"><button class="approve">Approve</button></a>
-                <!-- Uncomment below when reject route is implemented -->
-                <!-- <a href="{{ url_for('reject', id=partner.id) }}"><button class="reject">Reject</button></a> -->
-            </td>
-        </tr>
-        {% endfor %}
+            {% for partner in pending %}
+            <tr>
+                <td>{{ partner.full_name }}</td>
+                <td>{{ partner.store_name }}</td>
+                <td>{{ partner.location }}</td>
+                <td>{{ partner.partner_type }}</td>
+                <td>
+                    <a href="{{ url_for('approve', id=partner.id) }}">
+                        <button class="approve">Approve</button>
+                    </a>
+                    <a href="{{ url_for('reject', id=partner.id) }}">
+                        <button class="reject">Reject</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty">No pending applications.</p>
+        {% endif %}
+    </div>
 
-    </table>
-    {% else %}
-    <p>No pending applications.</p>
-    {% endif %}
+    <!-- 🟢 APPROVED -->
+    <div class="section">
+        <h2>Approved Partners</h2>
+
+        {% set approved = partners | selectattr('is_approved') | list %}
+
+        {% if approved %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Store</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+
+            {% for partner in approved %}
+            <tr>
+                <td>{{ partner.full_name }}</td>
+                <td>{{ partner.store_name }}</td>
+                <td>{{ partner.location }}</td>
+                <td class="status-approved">Approved</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty">No approved partners yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- 🔴 REJECTED -->
+    <div class="section">
+        <h2>Rejected Applications</h2>
+
+        {% set rejected = partners | selectattr('is_rejected') | list %}
+
+        {% if rejected %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Store</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+
+            {% for partner in rejected %}
+            <tr>
+                <td>{{ partner.full_name }}</td>
+                <td>{{ partner.store_name }}</td>
+                <td>{{ partner.location }}</td>
+                <td class="status-rejected">Rejected</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty">No rejected applications.</p>
+        {% endif %}
+    </div>
 
 </div>
 

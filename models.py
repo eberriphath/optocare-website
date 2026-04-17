@@ -20,5 +20,7 @@ class Partner(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     is_rejected = db.Column(db.Boolean, default=False)
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return f'<Partner {self.email}>'

@@ -1,17 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
 
-# -------------------------
-# CONFIGURATION
-# -------------------------
+# CONFIG
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///optocare.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret123'
-
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -20,7 +17,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 db = SQLAlchemy(app)
 
 # -------------------------
-# DATABASE MODEL
+# MODEL
 # -------------------------
 class Partner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,11 +37,10 @@ class Partner(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     is_rejected = db.Column(db.Boolean, default=False)
 
-    def __repr__(self):
-        return f'<Partner {self.email}>'
+    is_admin = db.Column(db.Boolean, default=False)  # ✅ NEW
 
 # -------------------------
-# CREATE DATABASE
+# CREATE DB
 # -------------------------
 with app.app_context():
     db.create_all()
@@ -62,38 +58,27 @@ def home():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        full_name = request.form.get('full_name')
         email = request.form.get('email')
-        password = request.form.get('password')
-        store_name = request.form.get('company_name')
-        location = request.form.get('location')
-        phone = request.form.get('phone')
-        services = request.form.get('services')
 
-        partner_types = request.form.getlist('partner_type')
-        partner_type_str = ", ".join(partner_types)
-
-        # Hash password
-        hashed_password = generate_password_hash(password)
-
-        # File upload
-        document = request.files.get('document')
-        filename = None
-        if document and document.filename != '':
-            filename = document.filename
-            document.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Prevent duplicate
+        if Partner.query.filter_by(email=email).first():
+            return "Email already exists. Please login."
 
         new_partner = Partner(
-            full_name=full_name,
+            full_name=request.form.get('full_name'),
             email=email,
-            password=hashed_password,
-            store_name=store_name,
-            location=location,
-            phone=phone,
-            partner_type=partner_type_str,
-            services=services,
-            document=filename
+            password=generate_password_hash(request.form.get('password')),
+            store_name=request.form.get('company_name'),
+            location=request.form.get('location'),
+            phone=request.form.get('phone'),
+            partner_type=", ".join(request.form.getlist('partner_type')),
+            services=request.form.get('services')
         )
+
+        # 👇 TEMP ADMIN CREATION
+        if email == "admin@optocare.com":
+            new_partner.is_admin = True
+            new_partner.is_approved = True
 
         db.session.add(new_partner)
         db.session.commit()
@@ -108,21 +93,24 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        partner = Partner.query.filter_by(email=request.form['email']).first()
 
-        partner = Partner.query.filter_by(email=email).first()
+        if not partner:
+            return "Invalid login details"
 
-        if partner:
-            if partner.is_rejected:
-                return "Your application was rejected."
+        if partner.is_rejected:
+            return "Your application was rejected."
 
-            if not partner.is_approved:
-                return "Your account is not approved yet."
+        if not partner.is_approved and not partner.is_admin:
+            return "Your account is not approved yet."
 
-            if check_password_hash(partner.password, password):
-                session['partner_id'] = partner.id
-                return redirect('/partner')
+        if check_password_hash(partner.password, request.form['password']):
+            session['partner_id'] = partner.id
+
+            if partner.is_admin:
+                return redirect('/admin')
+
+            return redirect('/partner')
 
         return "Invalid login details"
 
@@ -137,12 +125,17 @@ def logout():
     return redirect('/login')
 
 # -------------------------
-# ADMIN DASHBOARD (PROTECTED)
+# ADMIN DASHBOARD
 # -------------------------
 @app.route('/admin')
 def admin():
-    if 'partner_id' not in session:
+    if not session.get('partner_id'):
         return redirect('/login')
+
+    user = db.session.get(Partner, session['partner_id'])
+
+    if not user or not user.is_admin:
+        return "Access denied"
 
     partners = Partner.query.all()
     pending = Partner.query.filter_by(is_approved=False).all()
@@ -150,60 +143,76 @@ def admin():
     return render_template('admin-dashboard.html', partners=partners, pending=pending)
 
 # -------------------------
-# APPROVE PARTNER
+# APPROVE
 # -------------------------
 @app.route('/approve/<int:id>')
 def approve(id):
-    partner = Partner.query.get_or_404(id)
+    user = db.session.get(Partner, session.get('partner_id'))
+
+    if not user or not user.is_admin:
+        return "Access denied"
+
+    partner = db.session.get(Partner, id)
     partner.is_approved = True
     partner.is_rejected = False
+
     db.session.commit()
     return redirect('/admin')
 
 # -------------------------
-# REJECT PARTNER
+# REJECT
 # -------------------------
 @app.route('/reject/<int:id>')
 def reject(id):
-    partner = Partner.query.get_or_404(id)
+    user = db.session.get(Partner, session.get('partner_id'))
+
+    if not user or not user.is_admin:
+        return "Access denied"
+
+    partner = db.session.get(Partner, id)
     partner.is_rejected = True
     partner.is_approved = False
+
     db.session.commit()
     return redirect('/admin')
 
 # -------------------------
-# PARTNER DASHBOARD (PROTECTED)
+# PARTNER DASHBOARD
 # -------------------------
 @app.route('/partner')
 def partner_dashboard():
-    if 'partner_id' not in session:
+    if not session.get('partner_id'):
         return redirect('/login')
 
-    partner = Partner.query.get(session['partner_id'])
+    partner = db.session.get(Partner, session['partner_id'])
+
+    if not partner:
+        return redirect('/login')
+
     return render_template('partner-dashboard.html', partner=partner)
 
 # -------------------------
-# 🌍 PUBLIC PARTNERS DIRECTORY
+# PUBLIC PARTNERS
 # -------------------------
 @app.route('/partners')
 def partners():
-    approved_partners = Partner.query.filter_by(is_approved=True).all()
-    return render_template('partners.html', partners=approved_partners)
+    approved = Partner.query.filter_by(is_approved=True).all()
+    return render_template('partners.html', partners=approved)
 
 # -------------------------
-# 👤 SINGLE PARTNER PROFILE
+# PARTNER PROFILE
 # -------------------------
 @app.route('/partner/<int:id>')
 def partner_profile(id):
-    partner = Partner.query.get_or_404(id)
+    partner = db.session.get(Partner, id)
 
-    if not partner.is_approved:
+    if not partner or not partner.is_approved:
         return "This partner is not available."
 
     return render_template('partner-profile.html', partner=partner)
 
 # -------------------------
-# RUN APP
+# RUN
 # -------------------------
 if __name__ == '__main__':
     app.run(debug=True)
