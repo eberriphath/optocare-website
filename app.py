@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -15,6 +15,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 db = SQLAlchemy(app)
+
 
 # -------------------------
 # MODEL
@@ -37,13 +38,45 @@ class Partner(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     is_rejected = db.Column(db.Boolean, default=False)
 
-    is_admin = db.Column(db.Boolean, default=False)  # ✅ NEW
+    # ✅ NEW ROLE SYSTEM
+    role = db.Column(db.String(20), default="partner")
+
 
 # -------------------------
-# CREATE DB
+# INIT DB + CREATE ADMIN
 # -------------------------
 with app.app_context():
     db.create_all()
+
+    # ✅ Create admin if not exists
+    admin = Partner.query.filter_by(email="admin@optocare.com").first()
+
+    if not admin:
+        admin = Partner(
+            full_name="System Admin",
+            email="admin@optocare.com",
+            password=generate_password_hash("admin123"),
+            role="admin",
+            is_approved=True
+        )
+        db.session.add(admin)
+        db.session.commit()
+
+
+# -------------------------
+# HELPERS
+# -------------------------
+def current_user():
+    user_id = session.get('partner_id')
+    if not user_id:
+        return None
+    return db.session.get(Partner, user_id)
+
+
+def admin_required():
+    user = current_user()
+    return user and user.role == "admin"
+
 
 # -------------------------
 # HOME
@@ -51,6 +84,7 @@ with app.app_context():
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 # -------------------------
 # SIGNUP
@@ -60,7 +94,6 @@ def signup():
     if request.method == 'POST':
         email = request.form.get('email')
 
-        # Prevent duplicate
         if Partner.query.filter_by(email=email).first():
             return "Email already exists. Please login."
 
@@ -72,20 +105,17 @@ def signup():
             location=request.form.get('location'),
             phone=request.form.get('phone'),
             partner_type=", ".join(request.form.getlist('partner_type')),
-            services=request.form.get('services')
+            services=request.form.get('services'),
+            role="partner"
         )
-
-        # 👇 TEMP ADMIN CREATION
-        if email == "admin@optocare.com":
-            new_partner.is_admin = True
-            new_partner.is_approved = True
 
         db.session.add(new_partner)
         db.session.commit()
 
-        return "Application submitted. Wait for admin approval."
+        return redirect(url_for('login'))
 
     return render_template('signup.html')
+
 
 # -------------------------
 # LOGIN
@@ -98,23 +128,24 @@ def login():
         if not partner:
             return "Invalid login details"
 
+        if not check_password_hash(partner.password, request.form['password']):
+            return "Invalid login details"
+
         if partner.is_rejected:
             return "Your application was rejected."
 
-        if not partner.is_approved and not partner.is_admin:
+        if not partner.is_approved and partner.role != "admin":
             return "Your account is not approved yet."
 
-        if check_password_hash(partner.password, request.form['password']):
-            session['partner_id'] = partner.id
+        session['partner_id'] = partner.id
 
-            if partner.is_admin:
-                return redirect('/admin')
+        if partner.role == "admin":
+            return redirect(url_for('admin'))
 
-            return redirect('/partner')
-
-        return "Invalid login details"
+        return redirect(url_for('partner_dashboard'))
 
     return render_template('login.html')
+
 
 # -------------------------
 # LOGOUT
@@ -122,74 +153,73 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/login')
+    return redirect(url_for('login'))
+
 
 # -------------------------
 # ADMIN DASHBOARD
 # -------------------------
 @app.route('/admin')
 def admin():
-    if not session.get('partner_id'):
-        return redirect('/login')
-
-    user = db.session.get(Partner, session['partner_id'])
-
-    if not user or not user.is_admin:
-        return "Access denied"
+    if not admin_required():
+        return redirect(url_for('login'))
 
     partners = Partner.query.all()
     pending = Partner.query.filter_by(is_approved=False).all()
 
     return render_template('admin-dashboard.html', partners=partners, pending=pending)
 
+
 # -------------------------
 # APPROVE
 # -------------------------
 @app.route('/approve/<int:id>')
 def approve(id):
-    user = db.session.get(Partner, session.get('partner_id'))
-
-    if not user or not user.is_admin:
+    if not admin_required():
         return "Access denied"
 
     partner = db.session.get(Partner, id)
+    if not partner:
+        return "User not found"
+
     partner.is_approved = True
     partner.is_rejected = False
 
     db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('admin'))
+
 
 # -------------------------
 # REJECT
 # -------------------------
 @app.route('/reject/<int:id>')
 def reject(id):
-    user = db.session.get(Partner, session.get('partner_id'))
-
-    if not user or not user.is_admin:
+    if not admin_required():
         return "Access denied"
 
     partner = db.session.get(Partner, id)
+    if not partner:
+        return "User not found"
+
     partner.is_rejected = True
     partner.is_approved = False
 
     db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('admin'))
+
 
 # -------------------------
 # PARTNER DASHBOARD
 # -------------------------
 @app.route('/partner')
 def partner_dashboard():
-    if not session.get('partner_id'):
-        return redirect('/login')
-
-    partner = db.session.get(Partner, session['partner_id'])
+    partner = current_user()
 
     if not partner:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     return render_template('partner-dashboard.html', partner=partner)
+
 
 # -------------------------
 # PUBLIC PARTNERS
@@ -198,6 +228,7 @@ def partner_dashboard():
 def partners():
     approved = Partner.query.filter_by(is_approved=True).all()
     return render_template('partners.html', partners=approved)
+
 
 # -------------------------
 # PARTNER PROFILE
@@ -210,6 +241,7 @@ def partner_profile(id):
         return "This partner is not available."
 
     return render_template('partner-profile.html', partner=partner)
+
 
 # -------------------------
 # RUN
