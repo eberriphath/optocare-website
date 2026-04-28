@@ -76,6 +76,12 @@ button {
 
 <nav class="navbar">
     <h2 class="logo">Optocare Admin</h2>
+
+    <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('partners') }}">View Partners</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
 </nav>
 
 <div class="admin">

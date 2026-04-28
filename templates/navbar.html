@@ -1,0 +1,21 @@
+<nav class="navbar">
+    <h2 class="logo">Optocare</h2>
+
+    <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+
+        {% if session.get('partner_id') %}
+            <li><a href="{{ url_for('partner_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('partners') }}">Partners</a></li>
+
+            {% if current_user and current_user.is_admin %}
+                <li><a href="{{ url_for('admin') }}">Admin</a></li>
+            {% endif %}
+
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('signup') }}">Become a Partner</a></li>
+        {% endif %}
+    </ul>
+</nav>

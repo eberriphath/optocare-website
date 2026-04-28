@@ -5,14 +5,30 @@ import os
 
 app = Flask(__name__)
 
+# -------------------------
 # CONFIG
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///optocare.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'secret123'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+# -------------------------
 
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# ✅ DATABASE (PostgreSQL ready with fallback)
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    # Fix for postgres:// issue on some hosts
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    # fallback (local dev)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///optocare.db'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# ✅ SECRET KEY (secure)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
+
+# ✅ Upload folder
+app.config['UPLOAD_FOLDER'] = 'uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
@@ -38,7 +54,6 @@ class Partner(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     is_rejected = db.Column(db.Boolean, default=False)
 
-    # ✅ NEW ROLE SYSTEM
     role = db.Column(db.String(20), default="partner")
 
 
@@ -48,14 +63,16 @@ class Partner(db.Model):
 with app.app_context():
     db.create_all()
 
-    # ✅ Create admin if not exists
-    admin = Partner.query.filter_by(email="admin@optocare.com").first()
+    admin_email = "admin@optocare.com"
+    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+
+    admin = Partner.query.filter_by(email=admin_email).first()
 
     if not admin:
         admin = Partner(
             full_name="System Admin",
-            email="admin@optocare.com",
-            password=generate_password_hash("admin123"),
+            email=admin_email,
+            password=generate_password_hash(admin_password),
             role="admin",
             is_approved=True
         )
