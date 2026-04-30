@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+</head>
+<body>
+
+<h2>My Orders</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Order #</th>
+        <th>Customer</th>
+        <th>Status</th>
+    </tr>
+
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

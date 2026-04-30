@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Optical Order Form</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.form-sheet {
+    width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border: 2px solid #000;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+td, th {
+    border: 1px solid #000;
+    padding: 6px;
+    font-size: 14px;
+}
+
+th {
+    background: #eee;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.section-title {
+    background: #ddd;
+    font-weight: bold;
+    text-align: center;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #000;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="form-sheet">
+
+<h2>OPTICAL ORDER FORM</h2>
+
+<form method="POST">
+
+<!-- CLIENT INFO -->
+<table>
+<tr class="section-title"><td colspan="6">CLIENT INFORMATION</td></tr>
+
+<tr>
+<td>Order No</td>
+<td><input name="order_number"></td>
+
+<td>Date</td>
+<td><input name="date"></td>
+
+<td>PD</td>
+<td><input name="pd"></td>
+</tr>
+
+<tr>
+<td>Name</td>
+<td colspan="3"><input name="name"></td>
+
+<td>Phone</td>
+<td><input name="phone"></td>
+</tr>
+
+<tr>
+<td>DOB</td>
+<td><input name="dob"></td>
+
+<td colspan="4"></td>
+</tr>
+</table>
+
+
+<!-- PRESCRIPTION -->
+<table>
+<tr class="section-title"><td colspan="6">PRESCRIPTION</td></tr>
+
+<tr>
+<th></th>
+<th>SPH</th>
+<th>CYL</th>
+<th>AXIS</th>
+<th>ADD</th>
+<th></th>
+</tr>
+
+<tr>
+<td><strong>RIGHT</strong></td>
+<td><input name="right_sph"></td>
+<td><input name="right_cyl"></td>
+<td><input name="right_axis"></td>
+<td><input name="right_add"></td>
+<td></td>
+</tr>
+
+<tr>
+<td><strong>LEFT</strong></td>
+<td><input name="left_sph"></td>
+<td><input name="left_cyl"></td>
+<td><input name="left_axis"></td>
+<td><input name="left_add"></td>
+<td></td>
+</tr>
+</table>
+
+
+<!-- FRAME -->
+<table>
+<tr class="section-title"><td colspan="6">FRAME DETAILS</td></tr>
+
+<tr>
+<td>Make</td>
+<td><input name="frame_make"></td>
+
+<td>Model</td>
+<td><input name="frame_model"></td>
+
+<td>Shape</td>
+<td><input name="frame_shape"></td>
+</tr>
+
+<tr>
+<td>Tint</td>
+<td><input name="tint"></td>
+<td colspan="4"></td>
+</tr>
+</table>
+
+
+<!-- LENS -->
+<table>
+<tr class="section-title"><td colspan="6">LENS DETAILS</td></tr>
+
+<tr>
+<td>Lens Type</td>
+<td><input name="lens_type"></td>
+
+<td>Coating</td>
+<td><input name="coating"></td>
+
+<td>Base Curve</td>
+<td><input name="base_curve"></td>
+</tr>
+</table>
+
+
+<button class="submit-btn" type="submit">SUBMIT ORDER</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

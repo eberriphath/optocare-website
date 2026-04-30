@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Orders</title>
+</head>
+<body>
+
+<h2>All Orders</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Order #</th>
+        <th>Customer</th>
+        <th>Partner</th>
+        <th>Status</th>
+        <th>Update</th>
+    </tr>
+
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.partner.store_name }}</td>
+        <td>{{ order.status }}</td>
+
+        <td>
+            <form method="POST" action="{{ url_for('update_order_status', id=order.id) }}">
+                <select name="status">
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

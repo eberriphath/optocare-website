@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 import os
 
 app = Flask(__name__)
@@ -8,34 +9,27 @@ app = Flask(__name__)
 # -------------------------
 # CONFIG
 # -------------------------
-
-# ✅ DATABASE (PostgreSQL ready with fallback)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
-    # Fix for postgres:// issue on some hosts
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 else:
-    # fallback (local dev)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///optocare.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# ✅ SECRET KEY (secure)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
 
-# ✅ Upload folder
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
+# -------------------------
+# MODELS
+# -------------------------
 
-# -------------------------
-# MODEL
-# -------------------------
 class Partner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -56,9 +50,55 @@ class Partner(db.Model):
 
     role = db.Column(db.String(20), default="partner")
 
+    # Relationship
+    orders = db.relationship('Order', backref='partner', lazy=True)
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'), nullable=False)
+
+    # Customer
+    order_number = db.Column(db.String(50))
+    date = db.Column(db.String(50))
+    name = db.Column(db.String(100))
+    phone = db.Column(db.String(50))
+    dob = db.Column(db.String(50))
+
+    # Frame
+    frame_make = db.Column(db.String(100))
+    frame_model = db.Column(db.String(100))
+    frame_shape = db.Column(db.String(100))
+    frame_tint = db.Column(db.String(100))
+
+    # RIGHT
+    right_sph = db.Column(db.String(20))
+    right_cyl = db.Column(db.String(20))
+    right_axis = db.Column(db.String(20))
+    right_add = db.Column(db.String(20))
+    right_pd = db.Column(db.String(20))
+
+    # LEFT
+    left_sph = db.Column(db.String(20))
+    left_cyl = db.Column(db.String(20))
+    left_axis = db.Column(db.String(20))
+    left_add = db.Column(db.String(20))
+    left_pd = db.Column(db.String(20))
+
+    # Lens
+    lens_type = db.Column(db.String(100))
+    coating = db.Column(db.String(100))
+    tint = db.Column(db.String(100))
+    base_curve = db.Column(db.String(100))
+
+    # 🔥 IMPORTANT
+    status = db.Column(db.String(20), default="pending")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 # -------------------------
-# INIT DB + CREATE ADMIN
+# INIT DB + ADMIN
 # -------------------------
 with app.app_context():
     db.create_all()
@@ -96,15 +136,16 @@ def admin_required():
 
 
 # -------------------------
-# HOME
+# ROUTES
 # -------------------------
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
 # -------------------------
-# SIGNUP
+# AUTH
 # -------------------------
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -112,7 +153,7 @@ def signup():
         email = request.form.get('email')
 
         if Partner.query.filter_by(email=email).first():
-            return "Email already exists. Please login."
+            return "Email already exists."
 
         new_partner = Partner(
             full_name=request.form.get('full_name'),
@@ -134,18 +175,12 @@ def signup():
     return render_template('signup.html')
 
 
-# -------------------------
-# LOGIN
-# -------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         partner = Partner.query.filter_by(email=request.form['email']).first()
 
-        if not partner:
-            return "Invalid login details"
-
-        if not check_password_hash(partner.password, request.form['password']):
+        if not partner or not check_password_hash(partner.password, request.form['password']):
             return "Invalid login details"
 
         if partner.is_rejected:
@@ -164,9 +199,6 @@ def login():
     return render_template('login.html')
 
 
-# -------------------------
-# LOGOUT
-# -------------------------
 @app.route('/logout')
 def logout():
     session.clear()
@@ -174,7 +206,7 @@ def logout():
 
 
 # -------------------------
-# ADMIN DASHBOARD
+# ADMIN
 # -------------------------
 @app.route('/admin')
 def admin():
@@ -187,46 +219,66 @@ def admin():
     return render_template('admin-dashboard.html', partners=partners, pending=pending)
 
 
-# -------------------------
-# APPROVE
-# -------------------------
+@app.route('/admin/orders')
+def admin_orders():
+    if not admin_required():
+        return redirect(url_for('login'))
+
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template('admin-orders.html', orders=orders)
+
+
+@app.route('/admin/order/<int:id>/update', methods=['POST'])
+def update_order_status(id):
+    if not admin_required():
+        return "Access denied"
+
+    order = db.session.get(Order, id)
+
+    if not order:
+        return "Order not found"
+
+    status = request.form.get('status')
+
+    if status not in ["pending", "processing", "completed", "rejected"]:
+        return "Invalid status"
+
+    order.status = status
+    db.session.commit()
+
+    return redirect(url_for('admin_orders'))
+
+
 @app.route('/approve/<int:id>')
 def approve(id):
     if not admin_required():
         return "Access denied"
 
     partner = db.session.get(Partner, id)
-    if not partner:
-        return "User not found"
+    if partner:
+        partner.is_approved = True
+        partner.is_rejected = False
+        db.session.commit()
 
-    partner.is_approved = True
-    partner.is_rejected = False
-
-    db.session.commit()
     return redirect(url_for('admin'))
 
 
-# -------------------------
-# REJECT
-# -------------------------
 @app.route('/reject/<int:id>')
 def reject(id):
     if not admin_required():
         return "Access denied"
 
     partner = db.session.get(Partner, id)
-    if not partner:
-        return "User not found"
+    if partner:
+        partner.is_rejected = True
+        partner.is_approved = False
+        db.session.commit()
 
-    partner.is_rejected = True
-    partner.is_approved = False
-
-    db.session.commit()
     return redirect(url_for('admin'))
 
 
 # -------------------------
-# PARTNER DASHBOARD
+# PARTNER
 # -------------------------
 @app.route('/partner')
 def partner_dashboard():
@@ -238,8 +290,68 @@ def partner_dashboard():
     return render_template('partner-dashboard.html', partner=partner)
 
 
+@app.route('/create-order', methods=['GET', 'POST'])
+def create_order():
+    user = current_user()
+
+    if not user:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        order = Order(
+            partner_id=user.id,
+
+            order_number=request.form.get('order_number'),
+            date=request.form.get('date'),
+            name=request.form.get('name'),
+            phone=request.form.get('phone'),
+            dob=request.form.get('dob'),
+
+            frame_make=request.form.get('frame_make'),
+            frame_model=request.form.get('frame_model'),
+            frame_shape=request.form.get('frame_shape'),
+            frame_tint=request.form.get('frame_tint'),
+
+            right_sph=request.form.get('right_sph'),
+            right_cyl=request.form.get('right_cyl'),
+            right_axis=request.form.get('right_axis'),
+            right_add=request.form.get('right_add'),
+            right_pd=request.form.get('right_pd'),
+
+            left_sph=request.form.get('left_sph'),
+            left_cyl=request.form.get('left_cyl'),
+            left_axis=request.form.get('left_axis'),
+            left_add=request.form.get('left_add'),
+            left_pd=request.form.get('left_pd'),
+
+            lens_type=request.form.get('lens_type'),
+            coating=request.form.get('coating'),
+            tint=request.form.get('tint'),
+            base_curve=request.form.get('base_curve')
+        )
+
+        db.session.add(order)
+        db.session.commit()
+
+        return redirect(url_for('my_orders'))
+
+    return render_template('create-order.html')
+
+
+@app.route('/my-orders')
+def my_orders():
+    user = current_user()
+
+    if not user:
+        return redirect(url_for('login'))
+
+    orders = Order.query.filter_by(partner_id=user.id).order_by(Order.created_at.desc()).all()
+
+    return render_template('my-orders.html', orders=orders)
+
+
 # -------------------------
-# PUBLIC PARTNERS
+# PUBLIC
 # -------------------------
 @app.route('/partners')
 def partners():
@@ -247,9 +359,6 @@ def partners():
     return render_template('partners.html', partners=approved)
 
 
-# -------------------------
-# PARTNER PROFILE
-# -------------------------
 @app.route('/partner/<int:id>')
 def partner_profile(id):
     partner = db.session.get(Partner, id)
