@@ -43,6 +43,8 @@ class Order(db.Model):
     right_axis = db.Column(db.String(20))
     right_add = db.Column(db.String(20))
 
+    pd = db.Column(db.String(20))
+
     # Prescription (Left)
     left_sph = db.Column(db.String(20))
     left_cyl = db.Column(db.String(20))

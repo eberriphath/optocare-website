@@ -1,70 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Optical Order Form</title>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 <style>
-body {
+
+body{
     font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    padding: 20px;
+    background: #f3f4f6;
+    padding: 40px;
 }
 
-.form-sheet {
-    width: 900px;
+/* MAIN SHEET */
+.form-sheet{
+    width: 950px;
     margin: auto;
     background: white;
-    padding: 20px;
-    border: 2px solid #000;
+    padding: 30px;
+    border: 2px solid #111827;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-h2 {
+/* TITLE */
+h2{
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: #111827;
 }
 
-table {
+/* TABLES */
+table{
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 }
 
-td, th {
-    border: 1px solid #000;
-    padding: 6px;
+td,
+th{
+    border: 1px solid #111827;
+    padding: 10px;
     font-size: 14px;
 }
 
-th {
-    background: #eee;
+th{
+    background: #e5e7eb;
     text-align: center;
+    font-weight: bold;
 }
 
-input {
+/* SECTION HEADERS */
+.section-title td{
+    background: #111827;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+    padding: 12px;
+}
+
+/* INPUTS */
+input{
     width: 100%;
     border: none;
     outline: none;
     font-size: 14px;
+    background: transparent;
+    padding: 4px;
 }
 
-.section-title {
-    background: #ddd;
-    font-weight: bold;
-    text-align: center;
+/* INPUT HOVER FEEL */
+td:focus-within{
+    background: #f9fafb;
 }
 
-.submit-btn {
+/* BUTTON */
+.submit-btn{
     width: 100%;
-    padding: 12px;
-    background: #000;
+    padding: 15px;
+    background: #111827;
     color: white;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: 0.3s;
 }
-</style>
 
+.submit-btn:hover{
+    background: #1e3a8a;
+    transform: translateY(-1px);
+}
+
+/* RESPONSIVE */
+@media(max-width: 1000px){
+
+    .form-sheet{
+        width: 100%;
+        padding: 15px;
+    }
+
+    body{
+        padding: 10px;
+    }
+
+    td,
+    th{
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    h2{
+        font-size: 22px;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="form-sheet">
@@ -75,110 +135,137 @@ input {
 
 <!-- CLIENT INFO -->
 <table>
-<tr class="section-title"><td colspan="6">CLIENT INFORMATION</td></tr>
 
-<tr>
-<td>Order No</td>
-<td><input name="order_number"></td>
-
-<td>Date</td>
-<td><input name="date"></td>
-
-<td>PD</td>
-<td><input name="pd"></td>
+<tr class="section-title">
+    <td colspan="6">CLIENT INFORMATION</td>
 </tr>
 
 <tr>
-<td>Name</td>
-<td colspan="3"><input name="name"></td>
+    <td><strong>Order No</strong></td>
+    <td><input type="text" name="order_number"></td>
 
-<td>Phone</td>
-<td><input name="phone"></td>
+    <td><strong>Date</strong></td>
+    <td><input type="date" name="date"></td>
 </tr>
 
 <tr>
-<td>DOB</td>
-<td><input name="dob"></td>
+    <td><strong>Name</strong></td>
+    <td colspan="3">
+        <input type="text" name="name">
+    </td>
 
-<td colspan="4"></td>
+    <td><strong>Phone</strong></td>
+    <td><input type="text" name="phone"></td>
 </tr>
+
+<tr>
+    <td><strong>DOB</strong></td>
+    <td><input type="date" name="dob"></td>
+
+    <td colspan="4"></td>
+</tr>
+
 </table>
 
 
 <!-- PRESCRIPTION -->
 <table>
-<tr class="section-title"><td colspan="6">PRESCRIPTION</td></tr>
 
-<tr>
-<th></th>
-<th>SPH</th>
-<th>CYL</th>
-<th>AXIS</th>
-<th>ADD</th>
-<th></th>
+<tr class="section-title">
+    <td colspan="7">PRESCRIPTION</td>
 </tr>
 
 <tr>
-<td><strong>RIGHT</strong></td>
-<td><input name="right_sph"></td>
-<td><input name="right_cyl"></td>
-<td><input name="right_axis"></td>
-<td><input name="right_add"></td>
-<td></td>
+    <th></th>
+    <th>SPH</th>
+    <th>CYL</th>
+    <th>AXIS</th>
+    <th>ADD</th>
+    <th>PD</th>
 </tr>
 
 <tr>
-<td><strong>LEFT</strong></td>
-<td><input name="left_sph"></td>
-<td><input name="left_cyl"></td>
-<td><input name="left_axis"></td>
-<td><input name="left_add"></td>
-<td></td>
+    <td><strong>RIGHT</strong></td>
+
+    <td><input type="text" name="right_sph"></td>
+
+    <td><input type="text" name="right_cyl"></td>
+
+    <td><input type="text" name="right_axis"></td>
+
+    <td><input type="text" name="right_add"></td>
+
+    <td><input type="text" name="right_pd"></td>
 </tr>
+
+<tr>
+    <td><strong>LEFT</strong></td>
+
+    <td><input type="text" name="left_sph"></td>
+
+    <td><input type="text" name="left_cyl"></td>
+
+    <td><input type="text" name="left_axis"></td>
+
+    <td><input type="text" name="left_add"></td>
+
+    <td><input type="text" name="left_pd"></td>
+</tr>
+
 </table>
 
 
-<!-- FRAME -->
+<!-- FRAME DETAILS -->
 <table>
-<tr class="section-title"><td colspan="6">FRAME DETAILS</td></tr>
 
-<tr>
-<td>Make</td>
-<td><input name="frame_make"></td>
-
-<td>Model</td>
-<td><input name="frame_model"></td>
-
-<td>Shape</td>
-<td><input name="frame_shape"></td>
+<tr class="section-title">
+    <td colspan="6">FRAME DETAILS</td>
 </tr>
 
 <tr>
-<td>Tint</td>
-<td><input name="tint"></td>
-<td colspan="4"></td>
+    <td><strong>Make</strong></td>
+    <td><input type="text" name="frame_make"></td>
+
+    <td><strong>Model</strong></td>
+    <td><input type="text" name="frame_model"></td>
+
+    <td><strong>Shape</strong></td>
+    <td><input type="text" name="frame_shape"></td>
 </tr>
+
+<tr>
+    <td><strong>Tint</strong></td>
+    <td><input type="text" name="tint"></td>
+
+    <td colspan="4"></td>
+</tr>
+
 </table>
 
 
-<!-- LENS -->
+<!-- LENS DETAILS -->
 <table>
-<tr class="section-title"><td colspan="6">LENS DETAILS</td></tr>
+
+<tr class="section-title">
+    <td colspan="6">LENS DETAILS</td>
+</tr>
 
 <tr>
-<td>Lens Type</td>
-<td><input name="lens_type"></td>
+    <td><strong>Lens Type</strong></td>
+    <td><input type="text" name="lens_type"></td>
 
-<td>Coating</td>
-<td><input name="coating"></td>
+    <td><strong>Coating</strong></td>
+    <td><input type="text" name="coating"></td>
 
-<td>Base Curve</td>
-<td><input name="base_curve"></td>
+    <td><strong>Base Curve</strong></td>
+    <td><input type="text" name="base_curve"></td>
 </tr>
+
 </table>
 
-
-<button class="submit-btn" type="submit">SUBMIT ORDER</button>
+<button class="submit-btn" type="submit">
+    SUBMIT ORDER
+</button>
 
 </form>
 
