@@ -10,6 +10,16 @@ body {
     color: #1f2937;
 }
 
+.service-link{
+    text-decoration:none;
+    color:inherit;
+}
+
+.service-link:hover .card{
+    transform:translateY(-5px);
+    transition:0.3s ease;
+}
+
 /* NAVBAR */
 .navbar {
     display: flex;

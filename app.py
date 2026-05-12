@@ -492,7 +492,7 @@ def create_order():
 
             frame_make=request.form.get('frame_make'),
             frame_model=request.form.get('frame_model'),
-            frame_shape=request.form.get('frame_shape'),
+            frame_shape=request.form.get('frame_size'),
             frame_tint=request.form.get('frame_tint'),
 
             right_sph=request.form.get('right_sph'),
@@ -520,6 +520,96 @@ def create_order():
 
     return render_template('create-order.html')
 
+
+# -------------------------
+# SERVICES PAGE
+# -------------------------
+@app.route('/services/<service_name>')
+def service_page(service_name):
+
+    services = {
+
+        "eyewear-frames": {
+            "title": "Eyewear / Frames",
+            "description": "Premium optical frames from top global brands.",
+            "images": [
+                "frames1.jpg",
+                "frames2.jpg",
+                "frames3.jpg"
+            ]
+        },
+
+        "sunglasses": {
+            "title": "Sunglasses",
+            "description": "Luxury sunglasses for fashion and UV protection.",
+            "images": [
+                "sunglasses1.jpg",
+                "sunglasses2.jpg",
+                "sunglasses3.jpg"
+            ]
+        },
+
+        "contact-lenses": {
+            "title": "Contact Lenses",
+            "description": "Prescription and cosmetic contact lenses.",
+            "images": [
+                "lenses1.jpg",
+                "lenses2.jpg",
+                "lenses3.jpg"
+            ]
+        },
+
+        "ophthalmic-lenses": {
+            "title": "Ophthalmic Lenses",
+            "description": "Advanced lenses with premium coatings and protection.",
+            "images": [
+                "ophthalmic1.jpg",
+                "ophthalmic2.jpg",
+                "ophthalmic3.jpg"
+            ]
+        },
+
+        "repairs-adjustments": {
+            "title": "Repairs & Adjustments",
+            "description": "Professional optical repairs and fittings.",
+            "images": [
+                "repair1.jpg",
+                "repair2.jpg",
+                "repair3.jpg"
+            ]
+        },
+
+        "ophthalmic-machines": {
+            "title": "Ophthalmic Machines Consultancy",
+            "description": "Modern ophthalmic machines and consultation services.",
+            "images": [
+                "machine1.jpg",
+                "machine2.jpg",
+                "machine3.jpg"
+            ]
+        },
+
+        "accessories": {
+            "title": "Accessories",
+            "description": "Cases, cleaning kits, tools and optical accessories.",
+            "images": [
+                "accessory1.jpg",
+                "accessory2.jpg",
+                "accessory3.jpg"
+            ]
+        }
+
+    }
+
+    service = services.get(service_name)
+
+    if not service:
+        return "Service not found"
+
+    return render_template(
+        'service-page.html',
+        service=service
+    )
 
 # -------------------------
 # MY ORDERS
