@@ -361,6 +361,9 @@ def admin():
     )
 
 
+# -------------------------
+# ADMIN ORDERS LIST
+# -------------------------
 @app.route('/admin/orders')
 def admin_orders():
 
@@ -377,6 +380,29 @@ def admin_orders():
     )
 
 
+# -------------------------
+# ADMIN VIEW SINGLE ORDER
+# -------------------------
+@app.route('/admin/order/<int:id>')
+def admin_view_order(id):
+
+    if not admin_required():
+        return redirect(url_for('login'))
+
+    order = db.session.get(Order, id)
+
+    if not order:
+        return "Order not found"
+
+    return render_template(
+        'admin-order-details.html',
+        order=order
+    )
+
+
+# -------------------------
+# UPDATE ORDER STATUS
+# -------------------------
 @app.route('/admin/order/<int:id>/update', methods=['POST'])
 def update_order_status(id):
 
@@ -405,6 +431,9 @@ def update_order_status(id):
     return redirect(url_for('admin_orders'))
 
 
+# -------------------------
+# APPROVE PARTNER
+# -------------------------
 @app.route('/approve/<int:id>')
 def approve(id):
 
@@ -423,6 +452,9 @@ def approve(id):
     return redirect(url_for('admin'))
 
 
+# -------------------------
+# REJECT PARTNER
+# -------------------------
 @app.route('/reject/<int:id>')
 def reject(id):
 
@@ -439,7 +471,6 @@ def reject(id):
         db.session.commit()
 
     return redirect(url_for('admin'))
-
 
 # -------------------------
 # PARTNER DASHBOARD
