@@ -56,12 +56,14 @@ class Order(db.Model):
     # Frame details
     frame_make = db.Column(db.String(100))
     frame_model = db.Column(db.String(100))
-    frame_shape = db.Column(db.String(100))
-    tint = db.Column(db.String(100))
+    frame_size = db.Column(db.String(100))
+    frame_color = db.Column(db.String(100))
 
     # Lens
     lens_type = db.Column(db.String(100))
     coating = db.Column(db.String(100))
     base_curve = db.Column(db.String(100))
+
+    remarks = db.Column(db.String(100))
 
     status = db.Column(db.String(20), default="pending")

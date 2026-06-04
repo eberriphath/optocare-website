@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime
 import os
+import re
 
 app = Flask(__name__)
 
@@ -22,15 +23,40 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///optocare.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY"
+)
+
+if not SECRET_KEY:
+    raise Exception(
+        "SECRET_KEY missing"
+    )
+
+app.config['SECRET_KEY'] = SECRET_KEY
+
+app.config.update(
+
+    SESSION_COOKIE_HTTPONLY=True,
+
+    SESSION_COOKIE_SECURE=True,
+
+    SESSION_COOKIE_SAMESITE='Lax'
+
+)
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+os.makedirs(
+    app.config['UPLOAD_FOLDER'],
+    exist_ok=True
+)
 
 db = SQLAlchemy(app)
 
-serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
+serializer = URLSafeTimedSerializer(
+    app.config['SECRET_KEY']
+)
 
 # -------------------------
 # MODELS
@@ -79,8 +105,8 @@ class Order(db.Model):
     # Frame
     frame_make = db.Column(db.String(100))
     frame_model = db.Column(db.String(100))
-    frame_shape = db.Column(db.String(100))
-    frame_tint = db.Column(db.String(100))
+    frame_size = db.Column(db.String(100))
+    frame_color = db.Column(db.String(100))
 
     # RIGHT
     right_sph = db.Column(db.String(20))
@@ -118,10 +144,16 @@ with app.app_context():
 
     db.create_all()
 
-    admin_email = "admin@optocare.com"
-    admin_password = os.environ.get(
-        "ADMIN_PASSWORD",
-        "admin123"
+admin_email = "admin@optocare.com"
+
+admin_password = os.environ.get(
+    "ADMIN_PASSWORD"
+)
+
+if not admin_password:
+
+    raise Exception(
+        "ADMIN_PASSWORD missing"
     )
 
     admin = Partner.query.filter_by(
@@ -311,7 +343,7 @@ def reset_password(token):
         email = serializer.loads(
             token,
             salt='password-reset-salt',
-            max_age=3600
+            max_age=3600   # link valid for 1 hour
         )
 
     except:
@@ -326,7 +358,68 @@ def reset_password(token):
 
     if request.method == 'POST':
 
-        new_password = request.form.get('password')
+        new_password = request.form.get(
+            'password',
+            ''
+        )
+
+        confirm_password = request.form.get(
+            'confirm_password',
+            ''
+        )
+
+        # Match check
+        if new_password != confirm_password:
+            return "Passwords do not match."
+
+        # Minimum length
+        if len(new_password) < 12:
+            return (
+                "Password must be at least "
+                "12 characters long."
+            )
+
+        # Uppercase
+        if not any(
+            c.isupper()
+            for c in new_password
+        ):
+            return (
+                "Password needs at least "
+                "1 uppercase letter."
+            )
+
+        # Lowercase
+        if not any(
+            c.islower()
+            for c in new_password
+        ):
+            return (
+                "Password needs at least "
+                "1 lowercase letter."
+            )
+
+        # Number
+        if not any(
+            c.isdigit()
+            for c in new_password
+        ):
+            return (
+                "Password needs at least "
+                "1 number."
+            )
+
+        # Special character
+        special = "!@#$%^&*()-_=+[]{}"
+
+        if not any(
+            c in special
+            for c in new_password
+        ):
+            return (
+                "Password needs at least "
+                "1 special character."
+            )
 
         user.password = generate_password_hash(
             new_password
@@ -334,10 +427,13 @@ def reset_password(token):
 
         db.session.commit()
 
-        return redirect(url_for('login'))
+        return redirect(
+            url_for('login')
+        )
 
-    return render_template('reset-password.html')
-
+    return render_template(
+        'reset-password.html'
+    )
 
 # -------------------------
 # ADMIN
@@ -523,8 +619,8 @@ def create_order():
 
             frame_make=request.form.get('frame_make'),
             frame_model=request.form.get('frame_model'),
-            frame_shape=request.form.get('frame_size'),
-            frame_tint=request.form.get('frame_tint'),
+            frame_size=request.form.get('frame_size'),
+            frame_color=request.form.get('frame_color'),
 
             right_sph=request.form.get('right_sph'),
             right_cyl=request.form.get('right_cyl'),
@@ -541,7 +637,9 @@ def create_order():
             lens_type=request.form.get('lens_type'),
             coating=request.form.get('coating'),
             tint=request.form.get('tint'),
-            base_curve=request.form.get('base_curve')
+            base_curve=request.form.get('base_curve'),
+
+            remarks=request.form.get('remarks'),
         )
 
         db.session.add(order)

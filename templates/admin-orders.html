@@ -89,6 +89,17 @@ button{
     align-items:center;
 }
 
+/* 🔥 NEW: remarks styling */
+.remarks{
+    max-width:200px;
+    font-size:13px;
+    color:#374151;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    cursor:help;
+}
+
 </style>
 
 </head>
@@ -107,6 +118,10 @@ button{
     <th>Partner</th>
     <th>Date</th>
     <th>Status</th>
+
+    <!-- 🔥 NEW COLUMN -->
+    <th>Remarks</th>
+
     <th>Actions</th>
 </tr>
 
@@ -128,6 +143,17 @@ button{
     {{ order.status }}
 </span>
 
+</td>
+
+<!-- 🔥 NEW CELL -->
+<td>
+    {% if order.remarks %}
+        <div class="remarks" title="{{ order.remarks }}">
+            {{ order.remarks }}
+        </div>
+    {% else %}
+        <span style="color:#9ca3af;">No remarks</span>
+    {% endif %}
 </td>
 
 <td>
